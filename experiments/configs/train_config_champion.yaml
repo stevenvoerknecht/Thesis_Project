@@ -1,0 +1,33 @@
+experiment_name: "tcga_multimodal_champion"
+seed: 42
+modality: "multimodal"
+
+data:
+  dataset_type: "tcga"
+  data_path: "data/processed"
+  batch_size: 16
+  num_workers: 2
+  
+model:
+  image_input_dim: 768
+  text_input_dim: 1024
+  fusion_hidden: 128
+  hidden_units: [128, 64] # 👈 from HPO winner
+  num_classes: 33
+  dropout_rate: 0.3   # 👈 from HPO winner
+
+training:
+  epochs: 10
+  learning_rate: 0.0005 # 👈 from HPO winner
+  save_dir: "experiments/results_champion"
+
+mlflow:
+  experiment_name: tcga_champion_run
+  tracking_dir: "./experiments/mlflow_tracking"
+
+optimizer: "adam" # 👈 from HPO winner
+
+scheduler:
+  name: "reduce_lr_on_plateau"
+  factor: 0.1
+  patience: 2

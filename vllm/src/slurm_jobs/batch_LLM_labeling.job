@@ -1,0 +1,46 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --gpus-per-task=1
+#SBATCH --mem=16G
+#SBATCH --partition=gpu_h100
+#SBATCH --time=01:00:00
+#SBATCH --output=vllm/src/slurm_jobs/job_outputs/batch_LLM_job_%j.out
+#SBATCH --error=vllm/src/slurm_jobs/job_outputs/batch_LLM_job_%j.err
+
+# Setting the project root
+set -e
+PROJECT_ROOT="$SLURM_SUBMIT_DIR"
+export PROJECT_ROOT
+
+# Add src to Python path
+export PYTHONPATH=$PROJECT_ROOT/src:$PYTHONPATH
+echo "PROJECT_ROOT is: $PROJECT_ROOT"
+
+# Load Python module
+module load 2024
+module load Python/3.12.3-GCCcore-13.3.0
+module load CUDA/12.6.0
+
+# Exporting the CUDA path
+export CUDA_HOME=$CUDA_INSTALL_PATH
+export PATH=$CUDA_HOME/bin:$PATH
+export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+export VLLM_USE_DEEP_GEMM=0
+
+# Download the hugging face model on scratch shared
+echo "Downloading hugging face model to scratch shared"
+export HF_HOME="/scratch-shared/$USER/hf-cache-dir"
+
+# Export your own hugging face token for model access
+echo "Download complete"
+
+# Activate environment
+source "$PROJECT_ROOT/venv/bin/activate"
+
+# Set CuBLAS deterministic flag
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+
+# Run batch LLM labelling on the raw data
+python -u $PROJECT_ROOT/vllm/src/python_scripts/batch_LLM_classification.py

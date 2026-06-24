@@ -15,14 +15,16 @@ Clone the repository and set up your isolated environment.
 ```bash
 # 1. Create a virtual environment
 python -m venv venv
+
+# 2. If you are using the snellius server, first run
+module load 2024
+module load Python/3.12.3-GCCcore-13.3.0
+module load CUDA/12.6.0
+
+# 3. Activate the source
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# 2. Install the package in "Editable" mode
-pip install -e .
-
-# 3 If you are using the snellius server, first run
-module load 2025
-# before running
+# 3. Install the package in "Editable" mode
 pip install -e .
 
 # 4. Install pre-commit hooks

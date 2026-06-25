@@ -1,16 +1,15 @@
 # 🚀 vLLM Inference & Embedding Guide (Qwen3) on Snellius
 
-This guide explains how to perform **Batch Inference** (generating text) and **Batch Embedding** (converting text to vectors) using the Qwen3 model family on the Snellius `gpu_course` partition.
+This guide explains how to perform **Batch LLM classification** (generating classifications on text using an LLM) using the Llama-3.1-8B-Instruct model on the Snellius `gpu_h100` partition.
 
 ## 📂 Project Structure
 All commands should be executed from the **`src/`** directory to ensure paths remain consistent, but you can change this how you want:
 ```text
 vllm/src/
-├── data/                 # Input (.jsonl) and Output (.jsonl, .pkl)
-├── python_scripts/       # Python client scripts (Decoder & Encoder)
+├── data/                 # Input (.pqt) and Output (.pqt)
+├── python_scripts/       # Python client scripts (.py)
 ├── slurm_jobs/           # SLURM submission scripts (.job)
-├── DECODER_README.md     # This guide
-└── ENCODER_README.md     # Encoder specific details
+└── how_to_run.md         # This guide
 ```
 
 > **Note:** Remember to adjust the parameters in the `.job` files (such as `--time`, `--mem`, and `--cpus-per-task`) to suit the size and complexity of your own dataset. And also remember to change paths to your data, right now the script works as an example! 
@@ -18,7 +17,7 @@ vllm/src/
 ---
 
 ## 📥 1. Data Requirements
-All text data **must** be provided in `.jsonl` (JSON Lines) format. Each line must be a standalone JSON object.
+All text data **must** be provided in `.pqt` (Parquet Lines) format.
 
 * **Format Requirement:** Every piece of text information you wish to process should be structured exactly like the example below.
 * **Decoder Input:** Must contain a `"prompt"` key.

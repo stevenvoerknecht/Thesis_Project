@@ -20,4 +20,6 @@ data/raw/
 data/processed/
 src/ml_core/models/*.pt
 src/ml_core/models/*.ckpt
-src/ml_core/models/*.h5
+
+# 5. vLLM jobscript with HF token
+vllm/src/slurm_jobs/

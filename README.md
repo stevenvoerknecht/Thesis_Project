@@ -70,7 +70,7 @@ systemic_sovereignty_revival
 ```
 
 # Model Training Pipeline
-Follow these steps if you are reproducing experiments, modifying the tokenizer boundaries, or running a hyperparameter search grid.
+Follow these steps if you are want to reproduce experiments, run hyperparameter optimization or create your own multi-label text classification pipeline.
 
 ### 1. Text Preprocessing (vLLM)
 Before running training loops, raw text elements must undergo sequence generation or structuring. Read the dedicated how_to_run.md documentation located in vllm/ to execute your initial data curation passes. If you are using data that has been labeled already, check the LLM prompt at "/vllm/python_scripts/LLM_prompts/LLM_prompt_v4.md" to ensure your labels match those expected by the model. 

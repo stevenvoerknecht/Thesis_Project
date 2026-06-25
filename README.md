@@ -1,113 +1,171 @@
-# MLOps UvA Bachelor AI Course: Medical Image Classification Skeleton Code
+# Bachelor's Thesis: Multi-Label Text Classification into Strategic Narratives
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
-![Build Status](https://github.com/yourusername/mlops_course/actions/workflows/ci.yml/badge.svg)
 ![Code Style: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)
 
-A repo exemplifying **MLOps best practices**: modularity, reproducibility, automation, and experiment tracking.
+An advanced multi-label text classification framework designed to analyze and categorize text sequences (e.g., large Telegram datasets) into narrative taxonomies using deep transformer.
+
 ---
 
-## 🚀 Quick Start
+# Environment Setup
 
 ### 1. Installation
-Clone the repository and set up your isolated environment.
+Clone the repository and set up your isolated virtual environment inside your project directory.
 
 ```bash
 # 1. Create a virtual environment
 python -m venv venv
 
-# 2. If you are using the snellius server, first run
+# 2. If you are training or running inference on the SURF Snellius cluster, load required system modules
 module load 2024
 module load Python/3.12.3-GCCcore-13.3.0
 module load CUDA/12.6.0
 
-# 3. Activate the source
+# 3. Activate the environment
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# 3. Install the package in "Editable" mode
+# 4. Install the ecosystem dependencies and local package in editable mode
 pip install -e .
-
-# 4. Install pre-commit hooks
-pre-commit install
 ```
 
-### 2. Verify Setup
-```bash
-pytest tests/
-```
-### 3. vLLM preprocessing
-To run this model you need to run some preprocessing to create the text embeddings for the input. Read the how_to_run.md in the vllm/src/ folder and place the output of the vllm preprocessing in the folder data/raw (directly in MLOps_2026) under the name text_embeddings.pkl (very important to use exactly this name)
+### 2. Directory Initialization
+Due to storage constraints, directories managed by .gitignore must be initialized manually before executing data workflows or training jobs:
 
-### 4. Dataset storage
-It is trivial to have the dataset at a specific place in the structure so that config.yaml and TCGA_train.job work properly. The dataset cannot be placed on scratch-shared because this does not work properly, place the dataset in the MLOps_2026 folder in a folder named data/ and inside that folder have a folder called raw/ which contains the tcga_patient_to_cancer_type.csv, the tcga_titan_embeddings.pkl file and the text_embeddings.pkl file with these exact names. Then create a folder named data/processed. 
-
-### 5. Splitting the data
-Split the raw data using the create_split.py file in scripts/ by running this code from the MLOps_2026 folder (no deeper):
 ```bash
-python scripts/create_split.py
-```
-Then check if you see test_split.csv, train_split.csv and val_split.csv in data/processed. 
-
-### 6. Run an Experiment
-```bash
-python experiments/train.py --config experiments/configs/train_config.yaml
-```
-or run an experiment using a slurm job if you are running it on the Snellius server running this from the MLOps_2026/ folder (not deeper):
-```bash
-sbatch slurm_jobs/TCGA_train.job
-```
-or run any of the other slurm jobs to get either the optimal parameters (run_hpo.job) or run the champion (run_champion.job)
-
-### 7. Inference
-You can run an inference for a single sample on our current best model using inference.py.  
-Run the following command from the folder MLOps_2026 to run inference.py after running source venv/bin/activate:  
-```bash
-python experiments/inference.py \
-  --config experiments/configs/train_config_champion.yaml \
-  --checkpoint experiments/results_champion/best_checkpoint.pt 
-``` 
----
-
-### Training configuration
-The training configuration can be found in experiments/configs/ and can be changed to change hyperparameters.
-
-### Training
-To train the model run the following command from the MLOps_2026 folder (not the slurm_jobs folder):  
-```bash
-sbatch slurm_jobs/TCGA_train.job
+mkdir -p data/raw data/processed data/vllm_processed experiments/results
 ```
 
-### Checkpoints
-Checkpoints are saved in experiments/results (this is in .gitignore so is only there locally) and the best checkpoint can be found in experiments/result_champion/. 
+# Inference Guide (For Researchers)
+If you are a researcher looking to apply the optimized champion narrative model to a large, unseen dataset, use this streamlined pipeline.
 
-### Re-searching hyperparameters
-If you want to search all possible hyperparameters again, you can run this code from the MLOps_2026 folder: 
+### 1. Input Data Requirements
+Your target classification text data must be structured in Parquet format (.pqt) containing at least one string column named exactly message_text containing the text_message you wish to classify.
+
+### 2. Running Batched Prediction
+Execute the optimized inference module by pointing it to the standalone champion checkpoint folder. You can tune the batch size depending on your available GPU VRAM.
+
+Run the following command from the project root directory:
+
 ```bash
-sbatch slurm_jobs/run_hpo.job
+python3 scripts/inference.py \
+  --model_dir experiments/result_champion \
+  --data_path data/raw/your_unseen_dataset.pqt \
+  --output_path data/processed/final_tagged_predictions.pqt \
+  --batch_size 64 \
+  --max_length 256
 ```
-and then check the output in slurm_jobs/job_outputs to compare the different configurations of hyperparameters.
 
-
-## 📂 Project Structure
+### 3. Output Format
+The inference script matches your input records using Polars and appends a binary matrix mapping to the core narrative dimensions. The final output Parquet file will append the following columns with activation values (1 for active, 0 for inactive):
 
 ```text
+elite_vs_mass_conflict
+in_group_vs_out_group_exclusion
+institutional_knowledge_denial
+societal_moral_regression
+imminent_acute_crisis_panic
+systemic_sovereignty_revival
+```
+
+# Model Training Pipeline
+Follow these steps if you are reproducing experiments, modifying the tokenizer boundaries, or running a hyperparameter search grid.
+
+### 1. Text Preprocessing (vLLM)
+Before running training loops, raw text elements must undergo sequence generation or structuring. Read the dedicated how_to_run.md documentation located in vllm/ to execute your initial data curation passes. If you are using data that has been labeled already, check the LLM prompt at "/vllm/python_scripts/LLM_prompts/LLM_prompt_v4.md" to ensure your labels match those expected by the model. 
+
+### 2. Generating Data Splits
+Once your labeled dataset is generated, run the sequence splitting script to divide data into reproducible train, validation, and testing blocks:
+
+```bash
+python3 scripts/create_split.py
+``` 
+
+Verify that train_split.pqt, val_split.pqt, and test_split.pqt have been correctly generated inside data/processed/.
+
+### 3. Running Single Training or Hyperparameter Optimization (HPO)
+Training configurations and hyperparameters are driven by the setup files within experiments/configs/. Any change in file paths, hyperparameters or model can be made here. The current model (in the config.yaml files) used is "DTAI-KULeuven/robbert-2022-dutch-base", which is only applicable for dutch data. Use "microsoft/deberta-v3-base" for english or multilingual data, or use "BAAI/bge-m3" for very long (multilingual) messages. Other models are also possible. 
+
+To run a standard training experiment via Slurm (on the Snellius server):
+
+```bash
+sbatch slurm_jobs/train.job
+```
+
+To run a full multi-parameter hyperparameter grid search (HPO):
+
+```bash
+sbatch slurm_jobs/hpo.job
+```
+If, after running the HPO, new champion hyperparameters have been found, you can put these in train_config_champion.yaml and run:
+```bash
+sbatch slurm_jobs/champion.job
+```
+Running the same code on a local GPU requires you to first run some commands into your terminal before running the code:
+```bash
+set -e
+PROJECT_ROOT="$SLURM_SUBMIT_DIR"
+export PROJECT_ROOT
+export PYTHONPATH=$PROJECT_ROOT/src:$PYTHONPATH
+echo "PROJECT_ROOT is: $PROJECT_ROOT"
+module load 2024
+module load Python/3.12.3-GCCcore-13.3.0
+module load CUDA/12.6.0
+source "$PROJECT_ROOT/venv/bin/activate"
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+```
+
+After which the training experiment can be run through:
+```bash
+python -u $PROJECT_ROOT/experiments/train.py --config $PROJECT_ROOT/experiments/configs/train_config.yaml 
+```
+And the HPO grid can be run through:
+```bash
+python -u $PROJECT_ROOT/experiments/train.py --config $PROJECT_ROOT/experiments/configs/hpo_config.yaml
+```
+### 4. Experiment Metrics Tracking
+The Hugging Face Trainer logs directly to both TensorBoard and MLflow backend structures simultaneously.
+
+To view training loss progression in real-time (TensorBoard):
+
+```bash
+tensorboard --logdir experiments/results
+```
+To compare metrics across your HPO grid using MLflow on Open OnDemand (Snellius):
+
+```bash
+MLFLOW_CORS_ALLOWED_ORIGINS="[https://ondemand.snellius.surf.nl](https://ondemand.snellius.surf.nl)" mlflow ui --backend-store-uri sqlite:///mlflow.db --host 0.0.0.0 --allowed-hosts "*"
+```
+
+When running on a local GPU, this command will suffice:
+```bash
+mlflow ui --backend-store-uri sqlite:///mlflow.db
+```
+
+### 5. Checkpoints Selection
+Checkpoints generated during optimization runs are managed dynamically inside experiments/results/. To preserve disk space, only the single best evaluation checkpoint per run is kept on the cluster. The final root optimized champion parameters are explicitly exported directly into experiments/result_champion/.
+
+# 📂 Project Structure
+```plaintext
 .
-├── src/ml_core/          # The Source Code (Library)
-│   ├── data/             # Data loaders and transformations
-│   ├── models/           # PyTorch model architectures
-│   ├── solver/           # Trainer class and loops
-│   └── utils/            # Loggers and experiment trackers
-├── experiments/          # The Laboratory
-│   ├── configs/          # YAML files for hyperparameters
-│   ├── results/          # Checkpoints and logs (Auto-generated)
-│   └── train.py          # Entry point for training
-├── slurm_jobs/           # slurm jobs that can be run on snellius
-├── data/                 # The data directory
-│   ├── raw/              # Folder with the raw .pkl files
-│   └── processed/        # Folder with the split csv files
-├── scripts/              # Helper scripts (plotting, etc)
-├── tests/                # Unit tests for QA
-├── vllm/                 # vllm preprocessing of text data
-├── pyproject.toml        # Config for Tools (Ruff, Pytest)
-└── README.md             # Readme file with setup information
+├── src/ml_core/            # Core architecture and package logic
+│   ├── data/               # Dataset preprocessing using tokenizer
+│   └── utils/              # Helper utilities
+├── experiments/            # The Laboratory
+│   ├── configs/            # YAML configuration files for hyperparameters
+│   ├── results/            # Run checkpoints and tensor logs (Auto-generated)
+│   ├── result_champion/    # Root folder containing the best evaluation model weights
+│   └── train.py            # Entry point for HPO and training optimization loops
+├── slurm_jobs/             # Slurm cluster submission configuration scripts
+│   └── job_outputs/        # Cluster terminal log files (.out / .err)
+├── data/                   # The data layer (Ignored by Git except for directory map)
+│   ├── raw/                # Source text Parquet structures
+│   ├── processed/          # Partitioned data files (train_split.pqt, etc.)
+│   └── vllm_processed/     # Output datasets from vLLM runs
+├── scripts/                # Helper scripts like inference.py and create_split.py
+├── vllm/                   # LLM data augmentation and preprocessing modules
+│   ├── python_scripts/     # vLLM runtime logic files
+│   └── slurm_jobs/         # Slurm setup configs for extraction pipelines
+├── tests/                  # Framework unit tests for QA checkpoints
+├── pyproject.toml          # Code linting parameters and dependencies
+└── README.md               # Pipeline execution and reproduction overview
 ```

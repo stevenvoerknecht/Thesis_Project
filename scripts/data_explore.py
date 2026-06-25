@@ -14,7 +14,7 @@ def load_data_pqt(file_path):
 
 if __name__ == "__main__":
     # Load the data
-    file_path = "../data/processed/labeled_subset_v4_2.pqt"
+    file_path = "data/vllm_processed/labeled_subset_v4_2.pqt"
     data = load_data_pqt(file_path)
 
     # Do not truncate text inside columns

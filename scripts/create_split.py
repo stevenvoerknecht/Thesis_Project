@@ -1,73 +1,77 @@
-import pandas as pd
-import pickle
-import os
-from sklearn.model_selection import train_test_split
+from pathlib import Path
+import polars as pl
+import numpy as np
+from iterstrat.ml_stratifiers import MultilabelStratifiedShuffleSplit
 
-RAW_DATA_DIR = 'data/raw'
-PROCESSED_DATA_DIR = 'data/processed'
-LABEL_FILE = os.path.join(RAW_DATA_DIR, 'tcga_patient_to_cancer_type.csv')
-IMAGE_EMBEDDING_FILE = os.path.join(RAW_DATA_DIR, 'tcga_titan_embeddings.pkl')
-TEXT_EMBEDDING_FILE = os.path.join(RAW_DATA_DIR, 'text_embeddings.pkl')
+def split_parquet_data():
 
+    # Configuration constants
+    INPUT_FILE = "data/vllm_processed/labeled_subset.pqt"
+    OUTPUT_DIR = "data/processed"
+    SEED = 42
 
-def create_splits():
-    print("Loading data...")
-    df_labels = pd.read_csv(LABEL_FILE)
+    # Create paths and output dir
+    input_path = Path(INPUT_FILE)
+    output_path = Path(OUTPUT_DIR)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    print(f"Streaming dataset via Polars from {input_path}...")
+    lazy_df = pl.scan_parquet(input_path)
     
-    # Load image embeddings
-    with open(IMAGE_EMBEDDING_FILE, 'rb') as f:
-        image_embeddings = pickle.load(f)
-    available_patients_with_images = set(image_embeddings.keys())
-    
-    # Load text embeddings
-    with open(TEXT_EMBEDDING_FILE, 'rb') as f:
-        text_embeddings = pickle.load(f)
-    available_patients_with_text = set(text_embeddings.keys())
-    
-    # Only keep patients that have BOTH image and text embeddings
-    available_patients = available_patients_with_images & available_patients_with_text
-    
-    df_clean = df_labels[df_labels['patient_id'].isin(available_patients)].copy()
-    
-    print(f"Total patients in CSV: {len(df_labels)}")
-    print(f"Patients with images: {len(available_patients_with_images)}")
-    print(f"Patients with text embeddings: {len(available_patients_with_text)}")
-    print(f"Patients with both: {len(df_clean)}")
-    
-    X = df_clean['patient_id'].values
-    y = df_clean['cancer_type'].values
-    
-    # Train/test split
-    X_train_val, X_test, y_train_val, y_test = train_test_split(
-        X, y, test_size=0.15, random_state=42, stratify=y
+    # Filter out empty records
+    lazy_df = lazy_df.filter(
+        pl.col("message_text").is_not_null() & 
+        (pl.col("message_text").str.strip_chars() != "")
     )
-    
-    X_train, X_val, y_train, y_val = train_test_split(
-        X_train_val, y_train_val, test_size=0.1765, random_state=42, stratify=y_train_val
-    )
-    
-    print("\n--- Split Results ---")
-    print(f"Train set: {len(X_train)} patients")
-    print(f"Val set:   {len(X_val)} patients")
-    print(f"Test set:  {len(X_test)} patients")
-    
-    # Sanity checks
-    assert len(set(X_train) & set(X_test)) == 0, "LEAKAGE: Train and Test overlap!"
-    assert len(set(X_train) & set(X_val)) == 0, "LEAKAGE: Train and Val overlap!"
-    assert len(set(X_val) & set(X_test)) == 0, "LEAKAGE: Val and Test overlap!"
-    print("No data leakage detected. Splits are valid.")
+    df = lazy_df.collect()
+    total_rows = len(df)
+    print(f"Dataset loaded. Total clean rows: {total_rows}")
 
-    os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
+    # Define your multi-label target columns to guide the stratification
+    label_columns = [
+        'elite_vs_mass_conflict',
+        'in_group_vs_out_group_exclusion',
+        'institutional_knowledge_denial',
+        'societal_moral_regression',
+        'imminent_acute_crisis_panic',
+        'systemic_sovereignty_revival'
+        # Once you generate your child narrative columns, append their names here!
+    ]
     
-    pd.DataFrame(X_train, columns=['patient_id']).to_csv(
-        os.path.join(PROCESSED_DATA_DIR, 'train_split.csv'), index=False)
-    pd.DataFrame(X_val, columns=['patient_id']).to_csv(
-        os.path.join(PROCESSED_DATA_DIR, 'val_split.csv'), index=False)
-    pd.DataFrame(X_test, columns=['patient_id']).to_csv(
-        os.path.join(PROCESSED_DATA_DIR, 'test_split.csv'), index=False)
-    
-    print(f"\nSplits saved in {PROCESSED_DATA_DIR}")
+    # Create the temporary binary matrix needed for stratification calculation
+    y_stratify = (df[label_columns].to_numpy() >= 2).astype(int)
+    X_indices = np.arange(total_rows).reshape(-1, 1)
 
+    print("Executing Optimized Multilabel Stratification")
+    
+    # Separate Test Set (10%)
+    msss_test = MultilabelStratifiedShuffleSplit(n_splits=1, test_size=0.10, random_state=SEED)
+    train_val_idx, test_idx = next(msss_test.split(X_indices, y_stratify))
+    
+    # Isolate temporary datasets based on index positions
+    df_train_val = df[train_val_idx]
+    y_train_val_stratify = y_stratify[train_val_idx]
+    X_train_val_indices = np.arange(len(df_train_val)).reshape(-1, 1)
+
+    # Split remaining 90% into Train (80% total) and Val (10% total)
+    msss_val = MultilabelStratifiedShuffleSplit(n_splits=1, test_size=0.1111, random_state=SEED)
+    train_idx, val_idx = next(msss_val.split(X_train_val_indices, y_train_val_stratify))
+
+    # Slice out final raw data splits
+    train_df = df_train_val[train_idx]
+    val_df = df_train_val[val_idx]
+    test_df = df[test_idx]
+
+    print("\n=== Balanced Split Distribution Results ===")
+    print(f"Train set: {train_df.height} rows ({train_df.height/total_rows*100:.1f}%)")
+    print(f"Val set:   {val_df.height} rows ({val_df.height/total_rows*100:.1f}%)")
+    print(f"Test set:  {test_df.height} rows ({test_df.height/total_rows*100:.1f}%)")
+
+    # Save to disk
+    train_df.write_parquet(output_path / "train_split.pqt")
+    val_df.write_parquet(output_path / "val_split.pqt")
+    test_df.write_parquet(output_path / "test_split.pqt")
+    print(f"\nSaved stratified splits safely to: {output_path}")
 
 if __name__ == "__main__":
-    create_splits()
+    split_parquet_data()

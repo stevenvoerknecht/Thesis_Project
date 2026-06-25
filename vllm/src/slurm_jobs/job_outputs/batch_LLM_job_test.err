@@ -1,11 +1,0 @@
-(EngineCore pid=1469863) Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
-(EngineCore pid=1469863) Loading safetensors checkpoint shards:  25% Completed | 1/4 [00:04<00:14,  4.76s/it]
-(EngineCore pid=1469863) Loading safetensors checkpoint shards:  50% Completed | 2/4 [00:09<00:09,  4.93s/it]
-(EngineCore pid=1469863) Loading safetensors checkpoint shards:  75% Completed | 3/4 [00:14<00:04,  4.85s/it]
-(EngineCore pid=1469863) Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:16<00:00,  3.68s/it]
-(EngineCore pid=1469863) Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:16<00:00,  4.11s/it]
-(EngineCore pid=1469863) 
-(EngineCore pid=1469863) 2026-06-11 22:45:43,391 - INFO - autotuner.py:615 - flashinfer.jit: [Autotuner]: Autotuning process starts ...
-(EngineCore pid=1469863) 2026-06-11 22:45:43,431 - INFO - autotuner.py:634 - flashinfer.jit: [Autotuner]: Autotuning process ends
-Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 126.97it/s]
-Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:04<00:28,  4.03s/it, est. speed input: 473.40 toks/s, output: 45.36 toks/s]Processed prompts:  25%|██▌       | 2/8 [00:04<00:11,  1.98s/it, est. speed input: 870.84 toks/s, output: 85.42 toks/s]Processed prompts:  38%|███▊      | 3/8 [00:04<00:05,  1.19s/it, est. speed input: 1241.97 toks/s, output: 126.49 toks/s]Processed prompts:  62%|██████▎   | 5/8 [00:05<00:01,  1.57it/s, est. speed input: 1946.87 toks/s, output: 204.76 toks/s]Processed prompts:  75%|███████▌  | 6/8 [00:05<00:01,  1.71it/s, est. speed input: 2133.99 toks/s, output: 234.21 toks/s]Processed prompts:  88%|████████▊ | 7/8 [00:06<00:00,  1.33it/s, est. speed input: 2219.70 toks/s, output: 240.70 toks/s]Processed prompts: 100%|██████████| 8/8 [00:07<00:00,  1.38it/s, est. speed input: 2354.90 toks/s, output: 266.11 toks/s]Processed prompts: 100%|██████████| 8/8 [00:07<00:00,  1.38it/s, est. speed input: 2354.90 toks/s, output: 266.11 toks/s]Processed prompts: 100%|██████████| 8/8 [00:07<00:00,  1.06it/s, est. speed input: 2354.90 toks/s, output: 266.11 toks/s]

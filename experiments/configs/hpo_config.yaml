@@ -1,52 +1,18 @@
-experiment_name: "tcga_multimodal_model_hpo"
+experiment_name: "DIMI_multilabel_narrative_classification_HPO"
 seed: 42
-
-# you can have the modalities "multimodal", "text" or "image"
-modality: "multimodal"
+# Change to "BAAI/bge-m3" when handling very long data or change to "microsoft/deberta-v3-base" when handling multilangual data 
+model_name: "DTAI-KULeuven/robbert-2022-dutch-base" 
+num_labels: 6
 
 data:
-  dataset_type: "tcga"
-  data_path: "data/processed"
-  batch_size: 16
-  num_workers: 2
-
-model:
-  image_input_dim: 768
-  text_input_dim: 1024
-  fusion_hidden: 128
-  num_classes: 33
-
-  # >>> GRID SEARCH PARAMETERS <<<
-  hidden_units:
-    - [128, 64]
-    - [256, 128]
-    - [512, 256]
-
-  dropout_rate:
-    - 0.1
-    - 0.3
+  dataset_type: "narrative_parquet"
+  processed_dir: "data/processed"
+  max_length: 512
+  num_workers: 4
 
 training:
-  epochs: 10
-
-  # >>> GRID SEARCH PARAMETER <<<
-  learning_rate:
-    - 0.001
-    - 0.0005
-
+  epochs: 5
+  learning_rate: [0.00002, 0.00003, 0.00005]
+  batch_size: [16, 32]
+  weight_decay: [0.1, 0.01]
   save_dir: "experiments/results"
-
-mlflow:
-  experiment_name: "tcga_hpo_runs"
-  tracking_dir: "./experiments/mlflow_tracking"
-
-# >>> GRID SEARCH PARAMETER <<<
-optimizer:
-  - "adam"
-  - "adamw"
-  - "sgd"
-
-scheduler:
-  name: "reduce_lr_on_plateau"
-  factor: 0.1
-  patience: 2

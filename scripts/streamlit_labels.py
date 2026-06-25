@@ -3,7 +3,7 @@ import polars as pl
 import plotly.express as px
 
 # Configuration - FIXED to match your pipeline's exact output path
-PATH_TO_LABELED_PARQUET = "data/processed/labeled_subset.pqt"
+PATH_TO_LABELED_PARQUET = "data/vllm_processed/labeled_subset.pqt"
 
 # Set page configuration to wide mode for optimal text reading
 st.set_page_config(page_title="DIMI Narrative Explorer", layout="wide")

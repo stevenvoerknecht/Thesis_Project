@@ -13,13 +13,15 @@ venv/
 
 # 3. Experiments outputs (auto-generated)
 experiments/results/
+experiments/result_champion/
 experiments/mlflow_tracking/
 
 # 4. Data and models (too large for Git)
 data/raw/
 data/processed/
+data/vllm_processed/
 src/ml_core/models/*.pt
 src/ml_core/models/*.ckpt
 
 # 5. vLLM jobscript with HF token
-vllm/src/slurm_jobs/
+vllm/slurm_jobs/

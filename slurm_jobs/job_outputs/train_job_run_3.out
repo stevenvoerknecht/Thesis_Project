@@ -1,0 +1,38 @@
+PROJECT_ROOT is: /gpfs/home5/svoerknecht1/Thesis_Project
+Tokenizing 40000 samples from train_split.pqt...
+Tokenizing 5000 samples from val_split.pqt...
+
+=== Run 1/1 | Learning Rate: 3e-05 | Batch Size: 16 | Weight Decay: 0.1 ===
+{'loss': '0.2664', 'grad_norm': '1.799', 'learning_rate': '2.88e-05', 'epoch': '0.2'}
+{'loss': '0.2308', 'grad_norm': '0.839', 'learning_rate': '2.76e-05', 'epoch': '0.4'}
+{'loss': '0.2225', 'grad_norm': '1.285', 'learning_rate': '2.64e-05', 'epoch': '0.6'}
+{'loss': '0.217', 'grad_norm': '1.243', 'learning_rate': '2.52e-05', 'epoch': '0.8'}
+{'loss': '0.2183', 'grad_norm': '1.023', 'learning_rate': '2.4e-05', 'epoch': '1'}
+{'eval_loss': '0.2067', 'eval_macro_f1': '0.3649', 'eval_micro_f1': '0.5507', 'eval_runtime': '10.06', 'eval_samples_per_second': '497', 'eval_steps_per_second': '31.11', 'epoch': '1'}
+{'loss': '0.1782', 'grad_norm': '2.468', 'learning_rate': '2.28e-05', 'epoch': '1.2'}
+{'loss': '0.1797', 'grad_norm': '2.271', 'learning_rate': '2.16e-05', 'epoch': '1.4'}
+{'loss': '0.1775', 'grad_norm': '1.647', 'learning_rate': '2.04e-05', 'epoch': '1.6'}
+{'loss': '0.1741', 'grad_norm': '1.18', 'learning_rate': '1.92e-05', 'epoch': '1.8'}
+{'loss': '0.1758', 'grad_norm': '1.332', 'learning_rate': '1.8e-05', 'epoch': '2'}
+{'eval_loss': '0.2064', 'eval_macro_f1': '0.4249', 'eval_micro_f1': '0.5968', 'eval_runtime': '10.14', 'eval_samples_per_second': '493.1', 'eval_steps_per_second': '30.87', 'epoch': '2'}
+{'loss': '0.1309', 'grad_norm': '2.364', 'learning_rate': '1.68e-05', 'epoch': '2.2'}
+{'loss': '0.1341', 'grad_norm': '3.255', 'learning_rate': '1.56e-05', 'epoch': '2.4'}
+{'loss': '0.1287', 'grad_norm': '1.746', 'learning_rate': '1.44e-05', 'epoch': '2.6'}
+{'loss': '0.1317', 'grad_norm': '1.633', 'learning_rate': '1.32e-05', 'epoch': '2.8'}
+{'loss': '0.1316', 'grad_norm': '3.339', 'learning_rate': '1.2e-05', 'epoch': '3'}
+{'eval_loss': '0.2439', 'eval_macro_f1': '0.4343', 'eval_micro_f1': '0.5809', 'eval_runtime': '10.08', 'eval_samples_per_second': '496.1', 'eval_steps_per_second': '31.05', 'epoch': '3'}
+{'loss': '0.09238', 'grad_norm': '3.556', 'learning_rate': '1.08e-05', 'epoch': '3.2'}
+{'loss': '0.09466', 'grad_norm': '2.294', 'learning_rate': '9.602e-06', 'epoch': '3.4'}
+{'loss': '0.09388', 'grad_norm': '3.051', 'learning_rate': '8.402e-06', 'epoch': '3.6'}
+{'loss': '0.09296', 'grad_norm': '3.797', 'learning_rate': '7.202e-06', 'epoch': '3.8'}
+{'loss': '0.08823', 'grad_norm': '3.768', 'learning_rate': '6.002e-06', 'epoch': '4'}
+{'eval_loss': '0.2768', 'eval_macro_f1': '0.4673', 'eval_micro_f1': '0.5949', 'eval_runtime': '10.11', 'eval_samples_per_second': '494.7', 'eval_steps_per_second': '30.97', 'epoch': '4'}
+{'loss': '0.06728', 'grad_norm': '1.217', 'learning_rate': '4.802e-06', 'epoch': '4.2'}
+{'loss': '0.06733', 'grad_norm': '4.207', 'learning_rate': '3.602e-06', 'epoch': '4.4'}
+{'loss': '0.06879', 'grad_norm': '1.373', 'learning_rate': '2.402e-06', 'epoch': '4.6'}
+{'loss': '0.06719', 'grad_norm': '2.885', 'learning_rate': '1.202e-06', 'epoch': '4.8'}
+{'loss': '0.06349', 'grad_norm': '3.682', 'learning_rate': '2.4e-09', 'epoch': '5'}
+{'eval_loss': '0.3', 'eval_macro_f1': '0.4557', 'eval_micro_f1': '0.5923', 'eval_runtime': '10.06', 'eval_samples_per_second': '497', 'eval_steps_per_second': '31.11', 'epoch': '5'}
+{'train_runtime': '1121', 'train_samples_per_second': '178.3', 'train_steps_per_second': '11.15', 'train_loss': '0.1397', 'epoch': '5'}
+Run 1 Finished. Macro F1: 0.4673. Best weights saved to: experiments/result_champion
+ New best configuration found!

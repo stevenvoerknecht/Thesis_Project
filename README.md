@@ -12,16 +12,16 @@ An advanced multi-label text classification framework designed to analyze and ca
 ### 1. Installation
 Clone the repository and set up your isolated virtual environment inside your project directory. 
 
-!Note: all shell commands in this README must be executed from the main project directory to ensure correct pathing. Make sure you are not running from a subfolder in the repository.
+!Note: all shell commands in this README must be executed from the main project directory (Thesis_Project) to ensure correct pathing. Make sure you are not running from a subfolder in the repository.
 
 ```bash
-# 1. Create a virtual environment
-python -m venv venv
-
-# 2. If you are training or running inference on the SURF Snellius cluster, load required system modules
+# 1. If you are training or running inference on the SURF Snellius cluster, load required system modules
 module load 2024
 module load Python/3.12.3-GCCcore-13.3.0
 module load CUDA/12.6.0
+
+# 2. Create a virtual environment
+python -m venv venv
 
 # 3. Activate the environment
 source venv/bin/activate  # On Windows: venv\Scripts\activate

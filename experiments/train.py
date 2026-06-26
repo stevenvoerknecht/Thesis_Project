@@ -36,7 +36,7 @@ def main(args):
     base_config = load_config(args.config)
     seed_everything(base_config["seed"])
     
-    # 1. Load Tokenizer & Datasets
+    # Load Tokenizer 
     model_name = base_config["model_name"] 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
@@ -46,13 +46,24 @@ def main(args):
     val_path = input_path / 'val_split.pqt'
     train_dataset = NarrativeParquetDataset(train_path, tokenizer, max_length=512)
     val_dataset = NarrativeParquetDataset(val_path, tokenizer, max_length=512)
+    
+    # id2label for correct label names
+    id2label = {
+        0: "Populist_narrative",
+        1: "Nativist_narrative",
+        2: "Denialist_narrative",
+        3: "Declinist_narrative",
+        4: "Apocalyptist_narrative",
+        5: "Revisionist_narrative"
+    }
+    label2id = {v: k for k, v in id2label.items()}
 
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
     # Create the correct MLFlow tracking URI
     os.environ["MLFLOW_TRACKING_URI"] = "sqlite:///mlflow.db"
 
-    # 2. Extract Hyperparameter Grid
+    # Extract Hyperparameter Grid
     lr_list = base_config["training"]["learning_rate"]
     batch_list = base_config["training"]["batch_size"]
     wd_list = base_config["training"]["weight_decay"]
@@ -69,7 +80,7 @@ def main(args):
 
     best_macro_f1 = -1.0
 
-    # 3. HPO Optimization Loop
+    # HPO Optimization Loop
     for run_idx, (lr, batch_size, wd) in enumerate(grid, 1):
         print(f"\n=== Run {run_idx}/{len(grid)} | Learning Rate: {lr} | Batch Size: {batch_size} | Weight Decay: {wd} ===")
 
@@ -77,7 +88,9 @@ def main(args):
         model = AutoModelForSequenceClassification.from_pretrained(
             model_name, 
             num_labels=base_config["num_labels"],
-            problem_type="multi_label_classification" # Automatically invokes BCEWithLogitsLoss
+            problem_type="multi_label_classification", # Automatically invokes BCEWithLogitsLoss
+            id2label=id2label,
+            label2id=label2id
         )
 
         run_dir = Path(base_config["training"]["save_dir"]) / f"run_{run_idx}"
@@ -126,7 +139,7 @@ def main(args):
 
         if current_f1 > best_macro_f1:
             best_macro_f1 = current_f1
-            print(f" New best configuration found!")
+            print(f"New best configuration found!")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train Hierarchical Multi-Label Transformer")

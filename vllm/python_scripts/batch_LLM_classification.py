@@ -35,7 +35,6 @@ df_sample = (
     lf.filter(
         pl.col("message_text").is_not_null() & 
         (pl.col("message_text") != "") & 
-        (pl.col("is_action_type").is_null()) &
         (pl.col("message_text").str.len_chars() >= MIN_CHAR_LENGTH) &
         (pl.col("message_text").str.split(" ").list.len() >= MIN_WORD_COUNT) 
     )
@@ -75,7 +74,7 @@ print("Initializing vLLM Offline Engine...")
 llm = LLM(
     model=MODEL_NAME,
     tensor_parallel_size=1, 
-    max_model_len=4096,
+    max_model_len=8192,
     trust_remote_code=True,
     enforce_eager=True
 )
@@ -94,8 +93,8 @@ messages = df_sample["message_text"].to_list()
 
 tokenizer = llm.get_tokenizer()
 
-# The model allows max 4096 tokens including system prompt
-MAX_ALLOWED_USER_TOKENS = 2000
+# The model allows max 8192 tokens including system prompt
+MAX_ALLOWED_USER_TOKENS = 4000
 
 formatted_prompts = []
 for msg in messages:

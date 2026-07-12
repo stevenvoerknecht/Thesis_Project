@@ -18,7 +18,7 @@ You must evaluate the text using a strict two-pass logical workflow to avoid str
    - *Never output true for the escape route while assigning a non-zero score to a narrative.*
 
 ### LANGUAGE SPECIFICATION
-- The target input text messages are written in Dutch (frequently containing informal internet slang, abbreviations, or typos).
+- The target input text messages are mostly written in Dutch (frequently containing informal internet slang, abbreviations, or typos).
 - Analyze the Dutch text for the narratives below, but write your "rationale" explanation field strictly in English.
 
 ### NARRATIVE TAXONOMY AND BOUNDARY CONDITIONS
@@ -27,7 +27,7 @@ You must evaluate the text using a strict two-pass logical workflow to avoid str
 - **Core Logic:** A vertical cleavage pitting the "Pure, Hard-working People" against a "Corrupt, Self-Serving Elite" who abuse power to disenfranchise ordinary citizens and suppress popular sovereignty.
 - **Grievance/Emotion:** Corruption, institutional betrayal, and deliberate exploitation; evokes anger and indignation.
 - **Targeted Entities:** Mainstream domestic politicians, government ministries, the judicial system, and legacy news media (e.g., NPO, NOS) framed as cartel puppets.
-- **BOUNDARY CONDITION:** Do not use this as a catch-all for general anger. If the text attacks an entity based on foreign origin or immigration status, score *in_group_vs_out_group_exclusion*. If it attacks knowledge infrastructure for manufacturing data or faking crises, score *institutional_knowledge_denial*.
+- **BOUNDARY CONDITION:** Do not use this as a catch-all for general anger or conflict. If the text attacks an entity based on foreign origin or immigration status, score *in_group_vs_out_group_exclusion*. If it attacks knowledge infrastructure for manufacturing data or faking crises, score *institutional_knowledge_denial*.
 
 2. in_group_vs_out_group_exclusion (The Nativist Narrative)
 - **Core Logic:** A horizontal cleavage pitting the "Native Population" against an "Immigrant/Minority External Out-group" based on origin, ethnicity, or religion. Frames the out-group as a threat to culture, socioeconomic stability, or physical safety.
@@ -42,7 +42,7 @@ You must evaluate the text using a strict two-pass logical workflow to avoid str
 - **BOUNDARY CONDITION:** Differs from pure populism because its primary battleground is empirical truth and knowledge infrastructure rather than wealth or political power. Can be combined with populist narratives when the "elite" is viewed as suppressing people using institutional conspiracies. 
 
 4. societal_moral_regression (The Declinist Narrative)
-- **Core Logic:** A nostalgic, backward-looking narrative asserting that the nation or society is on an irreversible downward trajectory due to the slow, internal erosion of individual and collective virtue or the threat posed by different cultures/ideologies.
+- **Core Logic:** A nostalgic, backward-looking narrative asserting that the nation or society is on an irreversible downward trajectory due to the slow, internal erosion of individual and collective virtue or the threat posed by different cultures/ideologies. It is often subtle, displaying outrage at modern developments in the news. 
 - **Grievance/Emotion:** Moral decline, fading work ethic, growing self-indulgence, and betrayal by modernity; evokes disillusionment and nostalgia for a virtuous past.
 - **Key Tropes:** Attributing decay to successive generations ("kids these days"), progressive social reforms, the influence of foreign cultures/ideologies/religions or modern societal structures and looking back with nostalgia to "the good old days". 
 - **BOUNDARY CONDITION:** can be combined with populist narratives, blaming economic decline on elitist exploitation or with nativist narratives, blaming societal degradation on immigrants.

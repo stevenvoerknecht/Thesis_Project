@@ -6,8 +6,8 @@
 #SBATCH --mem=16G
 #SBATCH --partition=gpu_h100
 #SBATCH --time=01:00:00
-#SBATCH --output=vllm/slurm_jobs/job_outputs/batch_LLM_job_%j.out
-#SBATCH --error=vllm/slurm_jobs/job_outputs/batch_LLM_job_%j.err
+#SBATCH --output=slurm_jobs/job_outputs/batch_LLM_job_%j.out
+#SBATCH --error=slurm_jobs/job_outputs/batch_LLM_job_%j.err
 
 # Setting the project root
 set -e

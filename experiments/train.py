@@ -105,13 +105,16 @@ def main(args):
             weight_decay=wd,
             eval_strategy="epoch",
             save_strategy="epoch",
-            fp16=torch.cuda.is_available(), # Mixed precision training if GPU is available
+            # fp16=torch.cuda.is_available(), # Mixed precision training if GPU is available
+            fp16=False,
+            bf16=torch.cuda.is_bf16_supported(),
             report_to=["mlflow", "tensorboard"],
             run_name=f"run_lr_{lr}_bs_{batch_size}",
             load_best_model_at_end=True,
             metric_for_best_model="macro_f1",
             greater_is_better=True,
-            save_total_limit=1
+            save_total_limit=1,
+            torch_compile=True
         )
 
         # Utilize native HF Trainer

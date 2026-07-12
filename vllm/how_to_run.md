@@ -57,3 +57,8 @@ To run the vllm code non-interactively on a Snellius node, run the jobscript fou
 ```bash
 sbatch slurm_jobs/run_vllm.job
 ```
+# Inspecting the data
+To inspect the data through a streamlit UI, you can run the file "streamlit_labels.py" in the "scripts/" folder. If you want to inspect your own parquet file, change the variable "PATH_TO_LABELED_PARQUET" in the file. To inspect the LLM-labeled data, run the following command from the master directory (Thesis_project/):
+```bash
+streamlit run scripts/streamlit_labels.py
+```

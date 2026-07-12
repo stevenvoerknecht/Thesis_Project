@@ -4,10 +4,10 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --gpus-per-task=1
 #SBATCH --mem=16G
-#SBATCH --partition=gpu_h100
-#SBATCH --time=03:30:00
-#SBATCH --output=slurm_jobs/job_outputs/train_job_%j.out
-#SBATCH --error=slurm_jobs/job_outputs/train_job_%j.err
+#SBATCH --partition=gpu_a100
+#SBATCH --time=00:30:00
+#SBATCH --output=slurm_jobs/job_outputs/inference_job_%j.out
+#SBATCH --error=slurm_jobs/job_outputs/inference_job_%j.err
 
 # Setting the project root
 set -e
@@ -30,4 +30,4 @@ source "$PROJECT_ROOT/venv/bin/activate"
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
 # Execute program located in $HOME, using the environment
-python -u $PROJECT_ROOT/experiments/train.py --config $PROJECT_ROOT/experiments/configs/train_config.yaml
+python -u $PROJECT_ROOT/scripts/inference_batch.py

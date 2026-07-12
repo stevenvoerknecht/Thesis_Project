@@ -19,6 +19,7 @@ experiments/results/
 data/raw/
 data/processed/
 data/vllm_processed/
+data/inference/
 
 # 5. vLLM jobscript with HF token
 vllm/slurm_jobs/

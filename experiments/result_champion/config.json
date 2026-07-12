@@ -24,11 +24,11 @@
   "intermediate_size": 3072,
   "is_decoder": false,
   "label2id": {
-    "Populist_narrative": 0,
-    "Nativist_narrative": 1,
-    "Denialist_narrative": 2,
-    "Declinist_narrative": 3,
     "Apocalyptist_narrative": 4,
+    "Declinist_narrative": 3,
+    "Denialist_narrative": 2,
+    "Nativist_narrative": 1,
+    "Populist_narrative": 0,
     "Revisionist_narrative": 5
   },
   "layer_norm_eps": 1e-05,

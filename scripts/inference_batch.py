@@ -5,13 +5,13 @@ from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 # Congiguaration constants
-INPUT_PARQUET = "data/raw/<YOUR_FILE_NAME>.pqt"
-OUTPUT_PARQUET = "data/processed_predictions/final_labeled.pqt"
+INPUT_PARQUET = "data/processed/test_split.pqt"
+OUTPUT_PARQUET = "data/inference/test_inference.pqt"
 MODEL_NAME = "Stevenvoerknecht/thesis-champion-model"
 
 BATCH_SIZE = 64        # Adjust based on your GPU VRAM limits
 MAX_LENGTH = 512       # Sequence length limit for tokenization
-THRESHOLD = 0.15       # Confidence boundary for active narratives
+THRESHOLD = 0.2       # Confidence boundary for active narratives
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 print(f"Using device: {DEVICE.upper()}")

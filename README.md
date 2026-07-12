@@ -41,32 +41,30 @@ mkdir -p data/raw data/processed data/vllm_processed experiments/results
 If you are a researcher looking to apply the optimized champion narrative model to a large, unseen dataset, use this streamlined pipeline.
 
 ### 1. Input Data Requirements
-Your target classification text data must be structured in Parquet format (.pqt) containing at least one string column named exactly message_text containing the text_message you wish to classify.
+Your target classification text data must be structured in Parquet format (.pqt) containing at least one string column named exactly message_text containing the text message you wish to classify.
 
 ### 2. Running Batched Prediction
-Execute the optimized inference module by pointing it to the standalone champion checkpoint folder. You can tune the batch size depending on your available GPU VRAM.
-
-Run the following command from the project root directory:
+If you want to run a batch inference using the model, you can run the file "scripts/inference_batch.py" on your local computer by running:
 
 ```bash
-python3 scripts/inference.py \
-  --model_dir experiments/result_champion \
-  --data_path data/raw/your_unseen_dataset.pqt \
-  --output_path data/processed/final_tagged_predictions.pqt \
-  --batch_size 64 \
-  --max_length 256
+python3 scripts/inference.py
+```
+
+Make sure to change the configuration parameters at the top of the file to make sure that they point to your own Parquet files. If you want to run inference on a large batch on the Snellius server you can run the following command in the terminal: 
+```bash
+sbatch slurm_jobs/inference.job
 ```
 
 ### 3. Output Format
-The inference script matches your input records using Polars and appends a binary matrix mapping to the core narrative dimensions. The final output Parquet file will append the following columns with activation values (1 for active, 0 for inactive):
+The inference script matches your input records using Polars and appends a binary matrix mapping to the core narrative dimensions. The final output Parquet file will contain the following columns with either the suffix _score to portray the sigmoid probability score of that narrative (from 0 to 1) or the suffic _active to portray wether or not the narrative is considered as active (0 or 1)
 
 ```text
-elite_vs_mass_conflict
-in_group_vs_out_group_exclusion
-institutional_knowledge_denial
-societal_moral_regression
-imminent_acute_crisis_panic
-systemic_sovereignty_revival
+Populist_narrative
+Nativist_narrative
+Denialist_narrative
+Declinist_narrative
+Apocalypticist_narrative
+Revisionist_narrative
 ```
 
 # Model Training Pipeline

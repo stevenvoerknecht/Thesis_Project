@@ -1,0 +1,29 @@
+Narrative Category,Support,Precision,Recall,F1-Score
+Populist Narrative,1324,0.7049180327868853,0.5845921450151057,0.639141205615194
+Nativist Narrative,138,0.49107142857142855,0.39855072463768115,0.44
+Denialist Narrative,1192,0.7264618434093162,0.6149328859060402,0.6660608814175375
+Declinist Narrative,71,0.2857142857142857,0.08450704225352113,0.13043478260869565
+Apocolypticist Narrative,595,0.6063348416289592,0.4504201680672269,0.5168756027000965
+Revisionist Narrative,222,0.4921875,0.28378378378378377,0.36
+
+\begin{table}
+\caption{Per-class classification performance on evaluation dataset with tuned decision thresholds.}
+\label{tab:model_performance}
+\begin{tabular}{lrrrr}
+\toprule
+Narrative Category & Support & Precision & Recall & F1-Score \\
+\midrule
+Populist Narrative & 1324 & 0.705 & 0.585 & 0.639 \\
+Nativist Narrative & 138 & 0.491 & 0.399 & 0.440 \\
+Denialist Narrative & 1192 & 0.726 & 0.615 & 0.666 \\
+Declinist Narrative & 71 & 0.286 & 0.085 & 0.130 \\
+Apocolypticist Narrative & 595 & 0.606 & 0.450 & 0.517 \\
+Revisionist Narrative & 222 & 0.492 & 0.284 & 0.360 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Macro-F1: 0.4588 | Micro-F1: 0.5979
+
+Optimized Thresholds: {'elite_vs_mass_conflict': 0.1, 'in_group_vs_out_group_exclusion': 0.2, 'institutional_knowledge_denial': 0.16, 
+                       'societal_moral_regression': 0.16, 'imminent_acute_crisis_panic': 0.2, 'systemic_sovereignty_revival': 0.12}

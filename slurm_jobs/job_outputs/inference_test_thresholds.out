@@ -1,0 +1,9 @@
+PROJECT_ROOT is: /gpfs/home5/svoerknecht1/Thesis_Project
+Using device: CUDA
+Loading tokenizer and model: Stevenvoerknecht/thesis-champion-model...
+Loaded target classification dimensions: ['elite_vs_mass_conflict', 'in_group_vs_out_group_exclusion', 'institutional_knowledge_denial', 'societal_moral_regression', 'imminent_acute_crisis_panic', 'systemic_sovereignty_revival']
+Scanning input Parquet files from: data/processed/test_split.pqt
+Ready to process 5000 message rows.
+Starting batch multi-label evaluation tracking
+Assembling prediction distributions back to dataframe layout...
+Success! Finished classification. Output saved to: data/inference/test_inference.pqt

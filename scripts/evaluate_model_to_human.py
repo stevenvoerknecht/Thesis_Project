@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from sklearn.metrics import precision_score, recall_score, f1_score, cohen_kappa_score
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 
 def run_inference(model, tokenizer, texts, device, max_length=512, batch_size=16):
@@ -42,18 +42,13 @@ def compute_metrics(y_true, y_pred, label_names):
         prec = precision_score(yt, yp, pos_label=1, zero_division=0)
         rec = recall_score(yt, yp, pos_label=1, zero_division=0)
         f1 = f1_score(yt, yp, pos_label=1, zero_division=0)
-        
-        try:
-            kappa = cohen_kappa_score(yt, yp)
-        except Exception:
-            kappa = np.nan
+    
 
         per_class.append({
             "Narrative Dimension": name,
             "Precision": round(prec, 4),
             "Recall": round(rec, 4),
             "F1-Score": round(f1, 4),
-            "Cohen's Kappa": round(kappa, 4) if not np.isnan(kappa) else 0.0,
             "Support": int(yt.sum())
         })
 
@@ -63,14 +58,12 @@ def compute_metrics(y_true, y_pred, label_names):
     macro_rec = recall_score(y_true, y_pred, average="macro", zero_division=0)
     macro_f1 = f1_score(y_true, y_pred, average="macro", zero_division=0)
     micro_f1 = f1_score(y_true, y_pred, average="micro", zero_division=0)
-    mean_kappa = np.nanmean([item["Cohen's Kappa"] for item in per_class])
 
     aggregates = {
         "Macro Precision": round(macro_prec, 4),
         "Macro Recall": round(macro_rec, 4),
         "Macro F1": round(macro_f1, 4),
-        "Micro F1": round(micro_f1, 4),
-        "Mean Cohen's Kappa": round(mean_kappa, 4)
+        "Micro F1": round(micro_f1, 4)
     }
 
     return df_per_class, aggregates

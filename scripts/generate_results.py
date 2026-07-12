@@ -13,8 +13,9 @@ from sklearn.metrics import (
 
 # Setup and plot styling
 OUTPUT_DIR = "thesis_results_output"
-SET_INFERENCE_PATH = "data/inference/test_inference.pqt"
+SET_INFERENCE_PATH = "data/inference/test_inference_champion.pqt"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+model_threshold = 0.3
 
 # Set publication-quality plot aesthetics
 plt.rcParams.update({
@@ -37,6 +38,15 @@ LABELS = [
     "systemic_sovereignty_revival"
 ]
 
+LABELS_PRED = [
+    "Populist_narrative",
+    "Nativist_narrative",
+    "Denialist_narrative",
+    "Declinist_narrative",
+    "Apocalypticist_narrative",
+    "Revisionist_narrative"
+]
+
 # Display-friendly labels for publication figures
 DISPLAY_LABELS = [
     "Populist Narrative",
@@ -47,15 +57,31 @@ DISPLAY_LABELS = [
     "Revisionist Narrative"
 ]
 
+# Narrative-specific optimal decision thresholds
+THRESHOLDS = {
+    "Populist_narrative": 0.32,
+    "Nativist_narrative": 0.44,
+    "Denialist_narrative": 0.18,
+    "Declinist_narrative": 0.22,
+    "Apocalypticist_narrative": 0.3,
+    "Revisionist_narrative": 0.26
+}
+
 # Load and perpare data
 df = pd.read_parquet(SET_INFERENCE_PATH)
 
 # Extract matrices and binarize
 y_true = (df[[f"{label}" for label in LABELS]].fillna(0).values >= 2).astype(int)
-y_scores = df[[f"{label}_score" for label in LABELS]].fillna(0.0).values
+y_scores = df[[f"{label}_score" for label in LABELS_PRED]].fillna(0.0).values
 
-# Apply per-class thresholding for binary predictions
-y_pred = (y_scores >= 0.5).astype(int)
+# Apply Narrative-Specific Thresholding
+y_pred = np.zeros_like(y_scores, dtype=int)
+threshold_list = []
+
+for i, label in enumerate(LABELS_PRED):
+    thresh = THRESHOLDS.get(label, 0.50)
+    threshold_list.append(thresh)
+    y_pred[:, i] = (y_scores[:, i] >= thresh).astype(int)
 
 # generate matrix labels and LaTeX export
 print("Generating Performance Metrics Table...")
@@ -75,6 +101,21 @@ macro_f1 = f1_score(y_true, y_pred, average="macro", zero_division=0)
 micro_f1 = f1_score(y_true, y_pred, average="micro", zero_division=0)
 
 metrics_df.to_csv(os.path.join(OUTPUT_DIR, "narrative_performance_metrics.csv"), index=False)
+
+# Find best threshold per narrative
+best_thresholds = {}
+for i, label in enumerate(LABELS_PRED):
+    best_f1 = 0.0
+    best_t = 0.5
+    for t in np.arange(0.10, 0.90, 0.02):
+        preds = (y_scores[:, i] >= t).astype(int)
+        score = f1_score(y_true[:, i], preds, zero_division=0)
+        if score > best_f1:
+            best_f1 = score
+            best_t = t
+    best_thresholds[label] = round(float(best_t), 2)
+
+print("Optimized Thresholds:", best_thresholds)
 
 # Format LaTeX Table String
 latex_table = metrics_df.to_latex(

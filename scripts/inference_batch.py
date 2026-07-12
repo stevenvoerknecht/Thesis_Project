@@ -6,13 +6,23 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 # Congiguaration constants
 INPUT_PARQUET = "data/processed/test_split.pqt"
-OUTPUT_PARQUET = "data/inference/test_inference.pqt"
+OUTPUT_PARQUET = "data/inference/test_inference_champion.pqt"
+# Hugging Face model: "Stevenvoerknecht/thesis-champion-model"
 MODEL_NAME = "Stevenvoerknecht/thesis-champion-model"
 
 BATCH_SIZE = 64        # Adjust based on your GPU VRAM limits
 MAX_LENGTH = 512       # Sequence length limit for tokenization
-THRESHOLD = 0.2       # Confidence boundary for active narratives
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Narrative-specific optimal decision thresholds
+THRESHOLDS = {
+    "Populist_narrative": 0.32,
+    "Nativist_narrative": 0.44,
+    "Denialist_narrative": 0.18,
+    "Declinist_narrative": 0.22,
+    "Apocalypticist_narrative": 0.3,
+    "Revisionist_narrative": 0.26
+}
 
 print(f"Using device: {DEVICE.upper()}")
 
@@ -71,13 +81,16 @@ print("Assembling prediction distributions back to dataframe layout...")
 
 # Dynamically construct evaluation array columns for each label
 prediction_columns = []
-for idx, label_name in id2label.items():
-    # Gather array scores for this specific column position index
+for idx in sorted(id2label.keys()):
+    label_name = id2label[idx]
     label_scores = [row[idx] for row in all_scores]
     
-    # Create two columns per label: raw probability float, and active binary boolean flag
+    # Retrieve the class-specific threshold (default to 0.5 if key not found)
+    threshold = THRESHOLDS.get(label_name, 0.50)
+    
+    # Save raw continuous probability score and class-specific binary prediction
     prediction_columns.append(pl.Series(f"{label_name}_score", label_scores))
-    prediction_columns.append(pl.Series(f"{label_name}_active", [score >= THRESHOLD for score in label_scores]))
+    prediction_columns.append(pl.Series(f"{label_name}_active", [score >= threshold for score in label_scores]))
 
 # Attach array updates into baseline dataframe
 df_final = df_all.with_columns(prediction_columns)

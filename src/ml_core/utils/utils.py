@@ -6,6 +6,23 @@ from typing import Any, Dict
 import numpy as np
 import torch
 import yaml
+from sklearn.metrics import f1_score
+
+def compute_metrics(eval_pred):
+    """Computes Macro and Micro F1 scores for Multi-Label tracking."""
+    predictions, labels = eval_pred
+    # Apply sigmoid to convert raw logits to probabilities
+    probs = 1 / (1 + np.exp(-predictions))
+    # Threshold at 0.5 to binarize predictions
+    preds = (probs > 0.5).astype(int)
+
+    macro_f1 = f1_score(labels, preds, average="macro", zero_division=0)
+    micro_f1 = f1_score(labels, preds, average="micro", zero_division=0)
+
+    return {
+        "macro_f1": macro_f1,
+        "micro_f1": micro_f1
+    }
 
 def load_config(path: str) -> Dict[str, Any]:
     """Safely loads a yaml configuration file."""

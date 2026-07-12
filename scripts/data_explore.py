@@ -14,7 +14,7 @@ def load_data_pqt(file_path):
 
 if __name__ == "__main__":
     # Load the data
-    file_path = "data/inference/test_inference.pqt"
+    file_path = "data/inference/val_inference_deberta.pqt"
     data = load_data_pqt(file_path)
 
     # Do not truncate text inside columns

@@ -48,12 +48,20 @@ def compute_metrics(y_true, y_pred, label_names):
 
 
 def main():
-    test_set_path = "data/inference/test_inference.pqt"
-    human_set_path = "data/human/human_annotation.csv"
+    test_set_path = "data/inference/test_inference_focalloss.pqt"
     llm_set_path = "data/vllm_processed/labeled_subset_v1.pqt"
 
     # Core narrative label categories
-    label_cols = [
+    label_cols_pred = [
+        "Populist_narrative",
+        "Nativist_narrative",
+        "Denialist_narrative",
+        "Declinist_narrative",
+        "Apocalypticist_narrative",
+        "Revisionist_narrative"
+    ]
+
+    label_cols_llm = [
         "elite_vs_mass_conflict",
         "in_group_vs_out_group_exclusion",
         "institutional_knowledge_denial",
@@ -63,7 +71,7 @@ def main():
     ]
 
     # Model boolean prediction columns according to your schema
-    model_pred_cols = [f"{col}_active" for col in label_cols]
+    model_pred_cols = [f"{col}_active" for col in label_cols_pred]
 
     # Load Parquet Test Set
     print(f"Loading test set: {test_set_path}")
@@ -78,9 +86,9 @@ def main():
 
     # Evaluation: Model Predictions vs. LLM Silver Labels
     # Convert LLM labels (Int64/Likert) to binary target (>0)
-    y_true_llm = (df_test[label_cols].fillna(0).values > 0).astype(int)
+    y_true_llm = (df_test[label_cols_llm].fillna(0).values > 0).astype(int)
     
-    df_class_llm, agg_llm = compute_metrics(y_true_llm, y_pred_model, label_cols)
+    df_class_llm, agg_llm = compute_metrics(y_true_llm, y_pred_model, label_cols_llm)
 
     print("\n" + "="*20 + " MODEL vs. LLM SILVER LABELS " + "="*20)
     print(df_class_llm.to_string(index=False))

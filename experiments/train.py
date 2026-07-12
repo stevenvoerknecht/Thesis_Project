@@ -13,24 +13,9 @@ from transformers import (
     DataCollatorWithPadding
 )
 from sklearn.metrics import f1_score
-from ml_core.utils import load_config, seed_everything
+from ml_core.utils import load_config, seed_everything, compute_metrics
 from ml_core.data import NarrativeParquetDataset
-
-def compute_metrics(eval_pred):
-    """Computes Macro and Micro F1 scores for Multi-Label tracking."""
-    predictions, labels = eval_pred
-    # Apply sigmoid to convert raw logits to probabilities
-    probs = 1 / (1 + np.exp(-predictions))
-    # Threshold at 0.5 to binarize predictions
-    preds = (probs > 0.5).astype(int)
-
-    macro_f1 = f1_score(labels, preds, average="macro", zero_division=0)
-    micro_f1 = f1_score(labels, preds, average="micro", zero_division=0)
-
-    return {
-        "macro_f1": macro_f1,
-        "micro_f1": micro_f1
-    }
+from ml_core.trainer import FocalLossTrainer
 
 def main(args):
     base_config = load_config(args.config)
@@ -53,7 +38,7 @@ def main(args):
         1: "Nativist_narrative",
         2: "Denialist_narrative",
         3: "Declinist_narrative",
-        4: "Apocalyptist_narrative",
+        4: "Apocalypticist_narrative",
         5: "Revisionist_narrative"
     }
     label2id = {v: k for k, v in id2label.items()}
@@ -117,7 +102,7 @@ def main(args):
             torch_compile=True
         )
 
-        # Utilize native HF Trainer
+        # Utilize native HF Trainer for BCEWithLogitsLoss or FocalLossTrainer for Focal loss training (change Trainer with FocalLossTrainer)
         trainer = Trainer(
             model=model,
             args=training_args,

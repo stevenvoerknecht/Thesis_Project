@@ -2,7 +2,7 @@ experiment_name: "DIMI_multilabel_narrative_classification_train"
 seed: 42
 # Base: DTAI-KULeuven/robbert-2022-dutch-base.
 # Change to "BAAI/bge-m3" when handling very long data or change to "microsoft/deberta-v3-base" when handling multilangual data 
-model_name: "microsoft/deberta-v3-base" 
+model_name: "DTAI-KULeuven/robbert-2022-dutch-base" 
 num_labels: 6
 
 data:
@@ -13,8 +13,8 @@ data:
 
 training:
   epochs: 5
-  learning_rate: 0.00003
-  batch_size: 32
+  learning_rate: 0.00005
+  batch_size: 16
   weight_decay: 0.1
   save_dir: "experiments/results"
   

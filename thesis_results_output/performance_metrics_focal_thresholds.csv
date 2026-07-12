@@ -1,0 +1,26 @@
+Narrative Category,Support,Precision,Recall,F1-Score
+Populist Narrative,1324,0.5922155688622754,0.7469788519637462,0.6606546426185704
+Nativist Narrative,138,0.52,0.37681159420289856,0.4369747899159664
+Denialist Narrative,1192,0.5947882736156351,0.7659395973154363,0.6696002933626696
+Declinist Narrative,71,0.11267605633802817,0.11267605633802817,0.11267605633802817
+Apocolypticist Narrative,595,0.5431034482758621,0.5294117647058824,0.5361702127659574
+Revisionist Narrative,222,0.3422818791946309,0.4594594594594595,0.3923076923076923
+
+\begin{table}
+\caption{Per-class classification performance on evaluation dataset with tuned decision thresholds.}
+\label{tab:model_performance}
+\begin{tabular}{lrrrr}
+\toprule
+Narrative Category & Support & Precision & Recall & F1-Score \\
+\midrule
+Populist Narrative & 1324 & 0.592 & 0.747 & 0.661 \\
+Nativist Narrative & 138 & 0.520 & 0.377 & 0.437 \\
+Denialist Narrative & 1192 & 0.595 & 0.766 & 0.670 \\
+Declinist Narrative & 71 & 0.113 & 0.113 & 0.113 \\
+Apocolypticist Narrative & 595 & 0.543 & 0.529 & 0.536 \\
+Revisionist Narrative & 222 & 0.342 & 0.459 & 0.392 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Macro-F1: 0.4681 | Micro-F1: 0.6103

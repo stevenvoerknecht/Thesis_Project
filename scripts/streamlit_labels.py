@@ -90,7 +90,7 @@ with col2:
     
     baseline_counts = baseline_counts.with_columns(
         pl.col(label_col).map_elements(
-            lambda x: "Baseline Chatter" if x else "Active DIMI Narrative",
+            lambda x: "Inactive narrative (noise)" if x else "Active Narrative",
             return_dtype=pl.String
         )
     )
